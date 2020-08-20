@@ -1,3 +1,10 @@
 <resources>
 	<string name="app_name">cryptoapp</string>
+
+	<string name="label_direct_volume">Direct Volume: %s</string>
+	<string name="label_total_volume">Total Volume: %s</string>
+	<string name="label_top_tier_volume">Top Tier Volume: %s</string>
+	<string name="label_market_capitalization">Market Capitalization: %s</string>
+
+	<string name="label_update_frequency">Update frequency: %d s</string>
 </resources>

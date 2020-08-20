@@ -51,6 +51,10 @@ dependencies {
 	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 	implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 	implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+	implementation "com.facebook.fresco:fresco:2.1.0"
+	implementation "com.facebook.fresco:imagepipeline-okhttp3:2.1.0"
+	// ui
+	implementation 'com.google.android.material:material:1.2.0'
 	// list
 	implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl:4.3.0'
 	implementation 'com.hannesdorfmann:adapterdelegates4-kotlin-dsl-layoutcontainer:4.3.0'

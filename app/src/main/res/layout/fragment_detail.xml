@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@android:color/white"
+	android:orientation="vertical"
+	android:padding="@dimen/activity_horizontal_margin"
+	>
+
+	<TextView
+		android:id="@+id/directVolume"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textSize="16sp"
+		tools:text="@string/label_direct_volume"
+		/>
+
+	<TextView
+		android:id="@+id/totalVolume"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="8dp"
+		android:text="Total Volume: 12345"
+		android:textSize="16sp"
+		/>
+
+	<TextView
+		android:id="@+id/topTierVolume"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="8dp"
+		android:text="Top Tier Volume: 12345"
+		android:textSize="16sp"
+		/>
+
+	<TextView
+		android:id="@+id/marketCapitalization"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:paddingTop="8dp"
+		android:text="Market Capitalization: 12345"
+		android:textSize="16sp"
+		/>
+</LinearLayout>
