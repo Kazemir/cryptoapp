@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,10 +34,12 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
+		val isMaterDetailFlow = arguments?.getBoolean(EXTRA_IS_MASTER_DETAIL_FLOW) ?: false
+
 		val seekAdapterDelegate = seekAdapterDelegate { value ->
 			viewModel.setUpdateFrequency(value)
 		}
-		val currencyAdapterDelegate = currencyAdapterDelegate { currency ->
+		val currencyAdapterDelegate = currencyAdapterDelegate(isMaterDetailFlow) { currency ->
 			viewModel.openCurrency(currency.ticker)
 		}
 		adapter = ListDelegationAdapter(seekAdapterDelegate, currencyAdapterDelegate)
@@ -44,29 +47,41 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 		val recyclerView = view.findViewById<RecyclerView>(android.R.id.list)
 		recyclerView.layoutManager = LinearLayoutManager(requireContext())
 		recyclerView.adapter = adapter
+		recyclerView.itemAnimator = DefaultItemAnimator().apply {
+			supportsChangeAnimations = false
+		}
 
 		viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 		viewModel.updateFrequency.observe(this, { value ->
 			Log.d(TAG, "updateFrequency.observe: value = $value")
-			// TODO rebuildList?
+			rebuildList(seek = value)
 		})
 		viewModel.currencyList.observe(this, { value ->
-			rebuildList(SeekUIModel(2), value)
+			rebuildList(currencies = value)
 			Log.d(TAG, "viewModel.currencyList.observe: value = $value")
 		})
 	}
 
-	private fun rebuildList(seek: SeekUIModel, currencies: List<CurrencyUIModel>) {
-		val newList = mutableListOf<ListItemUIModel>(seek)
-		newList.addAll(currencies)
+	private fun rebuildList(
+		seek: SeekUIModel? = viewModel.updateFrequency.value,
+		currencies: List<CurrencyUIModel>? = viewModel.currencyList.value
+	) {
+		val newList = mutableListOf<ListItemUIModel>()
+		if (seek != null) {
+			newList.add(seek)
+		}
+		if (currencies != null) {
+			newList.addAll(currencies)
+		}
 		if (adapter.items == null) {
 			adapter.items = newList
 			adapter.notifyDataSetChanged()
 		} else {
-			DiffUtil.calculateDiff(ListItemUIModelDiffUtilCallback(adapter.items, newList))
-				.dispatchUpdatesTo(
-					adapter
-				)
+			val diff = DiffUtil.calculateDiff(
+				ListItemUIModelDiffUtilCallback(adapter.items, newList)
+			)
+			adapter.items = newList
+			diff.dispatchUpdatesTo(adapter)
 		}
 	}
 
@@ -87,27 +102,32 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 			}
 		}
 
-	private fun currencyAdapterDelegate(currencyClickListener: (CurrencyUIModel) -> Unit) =
-		adapterDelegate<CurrencyUIModel, ListItemUIModel>(R.layout.item_currency) {
-			val name = findViewById<TextView>(R.id.name)
-			val price = findViewById<TextView>(R.id.price)
-			val change = findViewById<TextView>(R.id.change)
-			val image = findViewById<SimpleDraweeView>(R.id.image)
-			val itemView = findViewById<View>(R.id.itemView)
-			bind {
-				image.setImageURI(item.imageUrl)
-				name.text = item.ticker
-				price.text = item.price
-				change.text = item.changePercent24h
-				change.setTextColorRes(
-					if (item.isPositiveChange)
-						R.color.positiveChangeColor
-					else
-						R.color.negativeChangeColor
-				)
-				itemView.setOnClickListener {
-					currencyClickListener.invoke(item)
-				}
+	private fun currencyAdapterDelegate(
+		isMaterDetailFlow: Boolean,
+		currencyClickListener: (CurrencyUIModel) -> Unit
+	) = adapterDelegate<CurrencyUIModel, ListItemUIModel>(R.layout.item_currency) {
+		val name = findViewById<TextView>(R.id.name)
+		val price = findViewById<TextView>(R.id.price)
+		val change = findViewById<TextView>(R.id.change)
+		val image = findViewById<SimpleDraweeView>(R.id.image)
+		val itemView = findViewById<View>(R.id.itemView)
+		bind {
+			image.setImageURI(item.imageUrl)
+			name.text = item.ticker
+			price.text = item.price
+			change.text = item.changePercent24h
+			change.setTextColorRes(
+				if (item.isPositiveChange)
+					R.color.positiveChangeColor
+				else
+					R.color.negativeChangeColor
+			)
+			itemView.setOnClickListener {
+				currencyClickListener.invoke(item)
 			}
+			itemView.setBackgroundResource(
+				if (isMaterDetailFlow && item.isSelected) R.drawable.ripple_selected else R.drawable.ripple
+			)
 		}
+	}
 }

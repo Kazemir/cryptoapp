@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		val toolbar = findViewById<Toolbar>(R.id.toolbar)
+		val toolbar: Toolbar? = findViewById(R.id.toolbar)
 		setSupportActionBar(toolbar)
 		supportActionBar?.apply {
 			setDisplayHomeAsUpEnabled(true)

@@ -8,14 +8,20 @@
 	tools:context=".MainActivity"
 	>
 
-	<fragment
+	<FrameLayout
 		android:id="@+id/fragmentContainer"
 		android:layout_width="300dp"
 		android:layout_height="match_parent"
 		tools:layout="@layout/fragment_list"
 		/>
 
-	<fragment
+	<View
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:background="@color/selected"
+		/>
+
+	<FrameLayout
 		android:id="@+id/detailFragmentContainer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"

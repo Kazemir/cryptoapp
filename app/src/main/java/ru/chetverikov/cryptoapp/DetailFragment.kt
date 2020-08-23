@@ -13,6 +13,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 		const val EXTRA_CURRENCY_TICKER = "extra_currency_ticker"
 	}
 
+	private lateinit var ticker: String
 	private lateinit var viewModel: SharedViewModel
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,7 +24,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 		val topTierVolume = view.findViewById<TextView>(R.id.topTierVolume)
 		val marketCapitalization = view.findViewById<TextView>(R.id.marketCapitalization)
 
-		val ticker = arguments?.getString(EXTRA_CURRENCY_TICKER)
+		ticker = arguments?.getString(EXTRA_CURRENCY_TICKER)!!
 
 		viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
 		viewModel.currencyList.observe(this, Observer {
@@ -43,7 +44,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 	override fun onDetach() {
 		super.onDetach()
 		if (isRemoving) {
-			viewModel.closeCurrency()
+			viewModel.closeCurrency(ticker)
 		}
 	}
 }

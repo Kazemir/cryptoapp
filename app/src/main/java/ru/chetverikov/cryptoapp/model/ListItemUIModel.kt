@@ -16,7 +16,8 @@ data class CurrencyUIModel(
 	val directVolume: String,
 	val totalVolume: String,
 	val topTierVolume: String,
-	val marketCapitalization: String
+	val marketCapitalization: String,
+	val isSelected: Boolean = false,
 ) : ListItemUIModel()
 
 class ListItemUIModelDiffUtilCallback(

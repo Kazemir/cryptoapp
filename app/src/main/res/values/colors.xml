@@ -7,4 +7,6 @@
 	<color name="textColor">#131313</color>
 	<color name="positiveChangeColor">#559129</color>
 	<color name="negativeChangeColor">#942919</color>
+
+	<color name="selected">#f5f5f7</color>
 </resources>
