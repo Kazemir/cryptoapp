@@ -1,5 +1,6 @@
 package ru.chetverikov.cryptoapp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,8 @@ import io.reactivex.disposables.CompositeDisposable
 import ru.chetverikov.cryptoapp.extension.plusAssign
 import ru.chetverikov.cryptoapp.model.CurrencyUIModel
 import ru.chetverikov.cryptoapp.model.SeekUIModel
+
+private const val TAG = "SharedViewModel"
 
 class SharedViewModel : ViewModel() {
 
@@ -29,9 +32,9 @@ class SharedViewModel : ViewModel() {
 			.subscribe({ next ->
 				updateList(next)
 			}, { error ->
-				// todo
+				Log.d(TAG, "subscribe.onError: = $error")
 			}, {
-				// todo
+				Log.d(TAG, "subscribe.onComplete")
 			})
 	}
 

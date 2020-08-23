@@ -17,6 +17,7 @@ data class CurrencyUIModel(
 	val totalVolume: String,
 	val topTierVolume: String,
 	val marketCapitalization: String,
+	val lastUpdateTime: Long,
 	val isSelected: Boolean = false,
 ) : ListItemUIModel()
 

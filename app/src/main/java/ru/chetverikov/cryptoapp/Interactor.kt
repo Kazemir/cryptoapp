@@ -13,7 +13,7 @@ object Interactor {
 	}
 
 	fun getCurrencyList(): Observable<List<CurrencyUIModel>> {
-		return CryptoCompareRepository.getCurrency()
+		return CryptoCompareRepository.getCurrencyObservable()
 			.map { response ->
 				val list = mutableListOf<CurrencyUIModel>()
 				for (key in response.raw.keys) {
@@ -31,9 +31,11 @@ object Interactor {
 							totalVolume = display.totalVolume,
 							topTierVolume = display.topTierVolume,
 							marketCapitalization = display.marketCapitalization,
+							lastUpdateTime = raw.lastUpdate
 						)
 					)
 				}
+				list.sortBy { it.lastUpdateTime }
 				return@map list
 			}
 	}

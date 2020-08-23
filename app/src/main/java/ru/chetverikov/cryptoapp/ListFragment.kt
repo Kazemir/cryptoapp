@@ -73,12 +73,13 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 		if (currencies != null) {
 			newList.addAll(currencies)
 		}
-		if (adapter.items == null) {
+		val items = adapter.items
+		if (items == null) {
 			adapter.items = newList
 			adapter.notifyDataSetChanged()
 		} else {
 			val diff = DiffUtil.calculateDiff(
-				ListItemUIModelDiffUtilCallback(adapter.items, newList)
+				ListItemUIModelDiffUtilCallback(items, newList)
 			)
 			adapter.items = newList
 			diff.dispatchUpdatesTo(adapter)
