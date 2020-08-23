@@ -7,9 +7,12 @@ import ru.chetverikov.cryptoapp.network.CryptoCompareRepository
 
 object Interactor {
 
-	fun getUpdateFrequency(): SeekUIModel {
-		// TODO storage?
-		return SeekUIModel(30)
+	fun getUpdateFrequency(): Observable<SeekUIModel> {
+		return UpdateFrequencyStorage.getValueObservable().map { SeekUIModel(it) }
+	}
+
+	fun setUpdateFrequency(value: Int) {
+		UpdateFrequencyStorage.setValue(value)
 	}
 
 	fun getCurrencyList(): Observable<List<CurrencyUIModel>> {

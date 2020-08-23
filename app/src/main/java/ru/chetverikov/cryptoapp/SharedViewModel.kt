@@ -36,6 +36,10 @@ class SharedViewModel : ViewModel() {
 			}, {
 				Log.d(TAG, "subscribe.onComplete")
 			})
+		compositeDisposable += Interactor.getUpdateFrequency()
+			.subscribe {
+				updateFrequencyMutable.postValue(it)
+			}
 	}
 
 	override fun onCleared() {
@@ -43,7 +47,7 @@ class SharedViewModel : ViewModel() {
 	}
 
 	fun setUpdateFrequency(value: Int) {
-		updateFrequencyMutable.postValue(SeekUIModel(value))
+		Interactor.setUpdateFrequency(value)
 	}
 
 	fun openCurrency(ticker: String) {

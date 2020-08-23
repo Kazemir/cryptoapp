@@ -12,11 +12,16 @@ class App : Application() {
 
 	override fun onCreate() {
 		super.onCreate()
+		instance = this
 
 		MainInitializer(
 			FrescoInitializer(this, OkHttpClient())
 		).initialize()
 
 		ContextCompat.startForegroundService(this, Intent(this, SyncService::class.java))
+	}
+
+	companion object {
+		lateinit var instance: App
 	}
 }
