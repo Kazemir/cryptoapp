@@ -7,4 +7,7 @@
 	<string name="label_market_capitalization">Market Capitalization: %s</string>
 
 	<string name="label_update_frequency">Update frequency: %d s</string>
+
+	<string name="notification_title">Update frequency: %d s</string>
+	<string name="notification_text">Last update time mark: %d</string>
 </resources>

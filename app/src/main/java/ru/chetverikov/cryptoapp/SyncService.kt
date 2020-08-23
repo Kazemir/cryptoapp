@@ -10,6 +10,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import io.reactivex.disposables.CompositeDisposable
+import ru.chetverikov.cryptoapp.extension.plusAssign
+import ru.chetverikov.cryptoapp.network.CryptoCompareRepository
 
 private const val TAG = "SyncService"
 private const val NOTIFICATION_CHANNEL_ID = "SyncNotification"
@@ -17,12 +20,28 @@ private const val NOTIFICATION_ID = 1
 
 class SyncService : Service() {
 
+	private val compositeDisposable = CompositeDisposable()
+
+	private var updateFrequency: Int? = null
+	private var lastTimeUpdate: Long? = null
+
 	override fun onCreate() {
 		super.onCreate()
 		Log.d(TAG, "onCreate() called")
 
-		createNotificationChannelIfNeed()
-		startForeground(NOTIFICATION_ID, createNotification())
+		compositeDisposable += CryptoCompareRepository.getLastTimeUpdatedObservable()
+			.subscribe { date ->
+				updateFrequency?.also { frequency ->
+					rebuildNotification(frequency, date)
+				}
+			}
+		compositeDisposable += Interactor.getUpdateFrequency()
+			.subscribe {
+				updateFrequency = it.frequency
+				lastTimeUpdate?.also { date ->
+					rebuildNotification(it.frequency, date)
+				}
+			}
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -31,12 +50,15 @@ class SyncService : Service() {
 			"onStartCommand() called with: intent = $intent, flags = $flags, startId = $startId"
 		)
 
+		createNotificationChannelIfNeed()
+		startForeground(NOTIFICATION_ID, createNotification())
+
 		return START_STICKY
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
-		Log.d(TAG, "onDestroy() called")
+		compositeDisposable.dispose()
 	}
 
 	override fun onBind(intent: Intent?): IBinder? = null
@@ -61,5 +83,18 @@ class SyncService : Service() {
 			.setContentText("Синхронизация...")
 			.setProgress(0, 0, true)
 			.build()
+	}
+
+	private fun rebuildNotification(updateFrequency: Int, lastUpdateDate: Long) {
+		val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+			.setSmallIcon(R.drawable.ic_push)
+			.setContentTitle(getString(R.string.notification_title, updateFrequency))
+			.setContentText(getString(R.string.notification_text, lastUpdateDate))
+			.build()
+		ContextCompat.getSystemService(
+			this, NotificationManager::class.java
+		)?.apply {
+			notify(NOTIFICATION_ID, notification)
+		}
 	}
 }
