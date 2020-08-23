@@ -31,6 +31,7 @@ class SyncService : Service() {
 
 		compositeDisposable += CryptoCompareRepository.getLastTimeUpdatedObservable()
 			.subscribe { date ->
+				lastTimeUpdate = date
 				updateFrequency?.also { frequency ->
 					rebuildNotification(frequency, date)
 				}
